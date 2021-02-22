@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +21,14 @@ namespace LinearRegression
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        ObservableCollection<MyPoint> collection;
+
         public MainWindow()
         {
             InitializeComponent();
+            collection = new ObservableCollection<MyPoint>();
+            dataGrid.ItemsSource = collection;
         }
 
         private void titlePanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -38,6 +44,11 @@ namespace LinearRegression
         private void minimizeImg_MouseUp(object sender, MouseButtonEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
+        }
+
+        private void solveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(collection.Count.ToString());
         }
     }
 }
