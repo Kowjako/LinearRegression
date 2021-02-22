@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy ="http://oxyplot.org/wpf"
         mc:Ignorable="d"
         Title="Linear Regression v1.0" WindowStyle="None" Height="400" ResizeMode="NoResize" Width="800">
     <Window.Resources>
@@ -38,27 +39,37 @@
                     <ColumnDefinition Width="400"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
-                    <Button x:Name="solveBtn" MinHeight="30" Margin="4" Content="Solve regression" Click="solveBtn_Click"/>
-                    <Button x:Name="exportPlotBtn" MinHeight="30" Margin="4" Content="Export plot"/>
-                    <Button x:Name="exportDataBtn" MinHeight="30" Margin="4" Content="Export data"/>
-                    <Button x:Name="clearBtn" MinHeight="30" Margin="4" Content="Clear data"/>
-                    <Button x:Name="authorBtn" MinHeight="30" Margin="4" Content="Author"/>
+                    <Button IsEnabled="false" x:Name="solveBtn" MinHeight="30" Margin="4" Content="Solve regression" Click="solveBtn_Click"/>
+                    <Button IsEnabled="false" x:Name="exportPlotBtn" MinHeight="30" Margin="4" Content="Export plot" Click="exportPlotBtn_Click"/>
+                    <Button IsEnabled="False" x:Name="splittersBtn" MinHeight="30" Margin="4" Content="Change splitters" Click="splittersBtn_Click"/>
+                    <Button IsEnabled="false" x:Name="clearBtn" MinHeight="30" Margin="4" Content="Clear data" Click="clearBtn_Click"/>
+                    <Button x:Name="authorBtn" Background="DarkKhaki" MinHeight="30" Margin="4" Content="How to use" Click="authorBtn_Click"/>
                     <Border Margin="4" BorderBrush="LimeGreen" BorderThickness="1">
-                    <TextBlock MinHeight="20" Margin="4" FontSize="15" Text="Y = "/>
+                    <TextBlock x:Name="resultatField" MinHeight="20" Margin="4" FontSize="15" Text="Y = "/>
                     </Border>
-                    <Border Height="130" Margin="4" BorderThickness="1" BorderBrush="{StaticResource dashBrush}">
+                    <Border IsEnabled="false" x:Name="dropArea" Height="130" Margin="4" BorderThickness="1" BorderBrush="{StaticResource dashBrush}">
                         <StackPanel AllowDrop="True">
-                            <Image Height="100" Source="Resources/upload.png" AllowDrop="True"/>
+                            <Image Height="100" Source="Resources/upload.png" AllowDrop="True" Drop="Image_Drop"/>
                             <TextBlock HorizontalAlignment="Center" Margin="3" Text="Drag and Drop data .txt"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <DataGrid x:Name="dataGrid" Grid.Column="1" SelectionMode="Single" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" CanUserResizeColumns="False" CanUserResizeRows="False">
+                <DataGrid IsEnabled="false" Margin="4" x:Name="dataGrid" Grid.Column="1" ItemsSource="{Binding collection}" SelectionMode="Single" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" CanUserResizeColumns="False" CanUserResizeRows="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Path=X}" Header="X" Width="96"/>
-                        <DataGridTextColumn Binding="{Binding Path=Y}" Header="Y" Width="96"/>
+                        <DataGridTextColumn Binding="{Binding Path=X}" Header="X" Width="92"/>
+                        <DataGridTextColumn Binding="{Binding Path=Y}" Header="Y" Width="92"/>
                     </DataGrid.Columns>
                 </DataGrid>
+                <oxy:Plot Margin="4" x:Name="oxyPlot" Width="380" Grid.Column="2">
+                    <oxy:Plot.Axes>
+                        <oxy:LinearAxis Position="Bottom"/>
+                        <oxy:LinearAxis Position="Left"/>
+                    </oxy:Plot.Axes>
+                    <oxy:Plot.Series>
+                        <oxy:LineSeries x:Name="lineSeries" ItemsSource="{Binding collectionDataPoint}" LineStyle="None" MarkerType="Circle" MarkerFill="SandyBrown" MarkerSize="4"/>
+                        <oxy:LineSeries Color="Crimson" x:Name="areaSeris" ItemsSource="{Binding trendLineCollection}"/>
+                    </oxy:Plot.Series>
+                </oxy:Plot>
             </Grid>
         </Grid>
     </Border>

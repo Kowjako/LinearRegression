@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OxyPlot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Windows;
 
 namespace LinearRegression
 {
-    class MyPoint : DependencyObject
+    public class MyPoint : DependencyObject
     {
         public static readonly DependencyProperty XProperty;
         public static readonly DependencyProperty YProperty;
@@ -26,6 +27,12 @@ namespace LinearRegression
             this.Y = y;
         }
 
+        public MyPoint(string x, string y)
+        {
+            this.X = Convert.ToDouble(x);
+            this.Y = Convert.ToDouble(y);
+        }
+
         public double Y
         {
             get { return (double)GetValue(YProperty); }
@@ -42,6 +49,11 @@ namespace LinearRegression
             {
                 SetValue(XProperty, value);
             }
+        }
+
+        public static DataPoint ConvertToDataPoint(MyPoint point)
+        {
+            return new DataPoint(point.X, point.Y);
         }
     }
 }
