@@ -27,6 +27,7 @@ namespace LinearRegression
     public partial class MainWindow : Window
     {
         private string dataPath;
+        private Functionality functionality;
 
         public ObservableCollection<MyPoint> collection { get; set; }
         public ObservableCollection<DataPoint> collectionDataPoint { get; set; }
@@ -34,14 +35,13 @@ namespace LinearRegression
 
         private static readonly string  FAQMessage = "1. Przyjmwowana baza jest baza gdzie pomiedzy koordynatami stoi symbol spacji! Jezeli baza posiada inny separator to najpierw wybieramy Change splitters i tylko po tym wzucamy baze do programu\n2. Wykres mozna przesuwac/powiekszac za pomoca myszki\n3. Dane wejsciowe mozna redagowac za pomoca tabelki";
 
-        string[] splitters = { ",", "/", ":" };
-
         public MainWindow()
         {
             InitializeComponent();
             collection = new ObservableCollection<MyPoint>();
             trendLineCollection = new List<DataPoint>();
             collectionDataPoint = new ObservableCollection<DataPoint>();
+            functionality = new Functionality(this);
             DataContext = this;
         }
 
@@ -64,25 +64,18 @@ namespace LinearRegression
         {
             collectionDataPoint.Clear();
             trendLineCollection.Clear();
-            foreach(MyPoint singleMyPoint in collection)
-            {
-                collectionDataPoint.Add(MyPoint.ConvertToDataPoint(singleMyPoint));
-            }
-
-            LinearSolver solver = new LinearSolver(collection);
-            resultatField.Text = solver.functionExample();
-            trendLineCollection.AddRange(solver.startValues());
+            functionality.SolveRegression();
         }
 
         private void authorBtn_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(FAQMessage, "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
-            ActivateButtons();
+            functionality.ActivateButtons();
         }
 
         private void Image_Drop(object sender, DragEventArgs e)
         {
-            Clear();
+            functionality.Clear();
             dataPath = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
             if (dataPath.Substring(dataPath.LastIndexOf(".")) != ".txt")
             {
@@ -90,73 +83,24 @@ namespace LinearRegression
             }
             else
             {
-                using (StreamReader dataReader = new StreamReader(dataPath))
-                {
-                    string singlePoint;
-                    while ((singlePoint = dataReader.ReadLine()) != null)
-                        collection.Add(new MyPoint((singlePoint.Split(' ')[0]), (singlePoint.Split(' ')[1])));
-                }
+                functionality.FillDataGrid(dataPath);
             }
         }
 
         private void splittersBtn_Click(object sender, RoutedEventArgs e)
         {
-            string readerDatapath = null;
-            string text = null;
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "txt files (*.txt) | *.txt";
-            if (openFileDialog.ShowDialog() == true)
-            {
-                readerDatapath = openFileDialog.FileName;
-                using (StreamReader dataReader = new StreamReader(readerDatapath))
-                {
-                    text = dataReader.ReadToEnd();
-                    MessageBox.Show(text);
-                    foreach (string splitter in splitters)
-                    {
-                        text = text.Replace(splitter, " ");
-                    }
-                }
-                using (StreamWriter dataWriter = new StreamWriter(readerDatapath, false))
-                {
-                    dataWriter.Write(text);
-                }
-            }
+            functionality.ChangeSplitters();
         }
 
         private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
-            Clear();
+            functionality.Clear();
             resultatField.Text = "Y = ";
         }
 
         private void exportPlotBtn_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog savePlotDialog = new SaveFileDialog();
-            savePlotDialog.Filter = "PNG files (*.png) | *.png";
-            if (savePlotDialog.ShowDialog() == true)
-            {
-                var pngExporter = new PngExporter { Width = 500, Height = 500, Background = OxyColors.White };
-                pngExporter.ExportToFile(oxyPlot.ActualModel, savePlotDialog.FileName);
-            }        
-        }
-        
-        /*Function to clear all collections used in program */
-        private void Clear()
-        {
-            collectionDataPoint.Clear();
-            trendLineCollection.Clear();
-            collection.Clear();
-        }
-
-        private void ActivateButtons()
-        {
-            solveBtn.IsEnabled = true;
-            exportPlotBtn.IsEnabled = true;
-            splittersBtn.IsEnabled = true;
-            clearBtn.IsEnabled = true;
-            dataGrid.IsEnabled = true;
-            dropArea.IsEnabled = true;
-        }
+            functionality.ExportPlotToPng();       
+        } 
     }
 }

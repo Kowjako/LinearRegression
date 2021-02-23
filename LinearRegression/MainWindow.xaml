@@ -30,7 +30,7 @@
                 <Border DockPanel.Dock="Bottom" BorderBrush="Black" BorderThickness="0.5"/>
                 <TextBlock FontWeight="Bold" Height="16" Margin="5" Text="Linear Regresion v1.0" Foreground="White"/>
             </DockPanel>
-        <Image x:Name="closeImg" HorizontalAlignment="Right" Margin="0,2,5,3" Source="Resources/exit.png" MouseUp="closeImg_MouseUp"/>
+        <Image x:Name="closeImg" HorizontalAlignment="Right" Margin="0,2,10,3" Source="Resources/exit.png" MouseUp="closeImg_MouseUp"/>
         <Image x:Name="minimizeImg" Source="Resources/minimize.png" HorizontalAlignment="Right" Margin="0,2,40,2" MouseUp="minimizeImg_MouseUp"/>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
